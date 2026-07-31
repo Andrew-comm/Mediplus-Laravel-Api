@@ -16,21 +16,30 @@ class Medicine extends Model
         'buying_price',
         'selling_price',
         'quantity',
-        'supplier'
+        'supplier_id'
 
     ];
 
     protected $casts = [
 
-        'expiry_date'=>'date',
+        'expiry_date'=>'date:d/m/Y',
 
         'buying_price'=>'decimal:2',
 
         'selling_price'=>'decimal:2',
 
-        'quantity'=>'integer'
+        'quantity'=>'integer',
+        'supplier_id' => 'integer'
 
     ];
+
+   public function supplierData()
+    {
+        return $this->belongsTo(
+            Supplier::class,
+            'supplier_id'
+        );
+    }
 
 
 

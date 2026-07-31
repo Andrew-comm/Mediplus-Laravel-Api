@@ -15,23 +15,31 @@ class MedicineResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-        'id' => $this->id,
 
-        'name' => $this->name,
+        'id'=>$this->id,
 
-        'category' => $this->category,
+        'name'=>$this->name,
 
-        'batch_number' => $this->batch_number,
+        'category'=>$this->category,
 
-        'expiry_date' => $this->expiry_date,
+        'batch_number'=>$this->batch_number,
 
-        'buying_price' => $this->buying_price,
+        'expiry_date'=>$this->expiry_date
+            ? $this->expiry_date->format('d/m/Y')
+            : null,
 
-        'selling_price' => $this->selling_price,
+        'buying_price'=>$this->buying_price,
 
-        'quantity' => $this->quantity,
+        'selling_price'=>$this->selling_price,
 
-        'supplier' => $this->supplier,
-        ];
+        'quantity'=>$this->quantity,
+
+        'supplier_id'=>$this->supplier_id,
+
+        'supplier'=>$this->whenLoaded(
+            'supplierData'
+        ),
+
+    ];
     }
 }

@@ -16,8 +16,11 @@ class MedicineController extends Controller
     public function index()
     {
         return MedicineResource::collection(
-        Medicine::paginate(10)
-    );
+
+            Medicine::with('supplierData')
+            ->paginate(10)
+
+        );
     }
 
     /**
@@ -38,9 +41,10 @@ class MedicineController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Medicine $medicine)
+   public function show(Medicine $medicine)
     {
-        // return $medicine;
+        $medicine->load('supplierData');
+
         return new MedicineResource($medicine);
     }
 
@@ -75,4 +79,61 @@ class MedicineController extends Controller
         "message"=>"Medicine deleted"
     ]);
     }
+    public function expiringSoon()
+        {
+            $medicines = Medicine::with('supplierData')
+                ->whereBetween(
+                    'expiry_date',
+                    [
+                        now(),
+                        now()->addDays(30)
+                    ]
+                )
+                ->get();
+
+
+            return MedicineResource::collection(
+                $medicines
+            );
+        }
+
+public function lowStock()
+{
+
+    return MedicineResource::collection(
+
+        Medicine::where(
+            'quantity',
+            '<',
+            20
+        )
+        ->with('supplierData')
+        ->get()
+
+    );
+
 }
+public function expired()
+{
+
+    $medicines = Medicine::with('supplierData')
+        ->where(
+            'expiry_date',
+            '<',
+            now()
+        )
+        ->get();
+
+
+    return MedicineResource::collection(
+        $medicines
+    );
+
+}
+
+
+
+}
+
+
+
