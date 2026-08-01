@@ -41,6 +41,15 @@ class Medicine extends Model
         );
     }
 
+    public function saleItems()
+    {
+
+        return $this->hasMany(
+            SaleItem::class
+        );
+
+    }
+
 
 
 }
