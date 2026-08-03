@@ -65,10 +65,9 @@ class StoreMedicineRequest extends FormRequest
             'min:0'
         ],
 
-        'supplier' => [
+            'supplier_id' => [
             'required',
-            'string',
-            'max:255'
+            'exists:suppliers,id'
         ]
         ];
     }

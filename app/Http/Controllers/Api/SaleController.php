@@ -20,7 +20,8 @@ class SaleController extends Controller
 
         $sales = Sale::with([
             'customer',
-            'items.medicine'
+            'items.medicine',
+            'payments'
         ])
         ->latest()
         ->get();
@@ -75,25 +76,21 @@ class SaleController extends Controller
              * because database requires value
              */
 
-            $sale = Sale::create([
+           $sale = Sale::create([
 
+            'invoice_number' => 'TEMP-'.uniqid(),
 
-                'invoice_number'=>
-                'TEMP-'.uniqid(),
+            'customer_id' => $validated['customer_id'],
 
+            'total_amount' => 0,
 
-                'customer_id'=>
-                $validated['customer_id'],
+            'paid_amount' => 0,
 
+            'balance' => 0,
 
-                'total_amount'=>0,
+            'payment_status' => 'pending'
 
-
-                'payment_status'=>
-                $validated['payment_status']
-
-
-            ]);
+        ]);
 
 
 
@@ -244,10 +241,15 @@ class SaleController extends Controller
 
             $sale->update([
 
-                'total_amount'=>$total
+                'total_amount' => $total,
+
+                'paid_amount' => 0,
+
+                'balance' => $total,
+
+                'payment_status' => 'pending'
 
             ]);
-
 
 
 
@@ -279,14 +281,15 @@ class SaleController extends Controller
     public function show(Sale $sale)
     {
 
-        return new SaleResource(
+      return new SaleResource(
 
-            $sale->load([
-                'customer',
-                'items.medicine'
-            ])
+        $sale->load([
+            'customer',
+            'items.medicine',
+            'payments'
+        ])
 
-        );
+    );
 
     }
 
@@ -308,7 +311,7 @@ class SaleController extends Controller
         $validated = $request->validate([
 
             'payment_status'=>
-            'sometimes|in:pending,paid,partial'
+            'sometimes|in:pending,partial,paid'
 
         ]);
 

@@ -7,39 +7,55 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class MedicineResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
     public function toArray(Request $request): array
     {
         return [
 
-        'id'=>$this->id,
+            'id'=>$this->id,
 
-        'name'=>$this->name,
+            'name'=>$this->name,
 
-        'category'=>$this->category,
+            'category'=>$this->category,
 
-        'batch_number'=>$this->batch_number,
+            'batch_number'=>$this->batch_number,
 
-        'expiry_date'=>$this->expiry_date
-            ? $this->expiry_date->format('d/m/Y')
-            : null,
+            'expiry_date'=>$this->expiry_date
+                ? $this->expiry_date->format('Y-m-d')
+                : null,
 
-        'buying_price'=>$this->buying_price,
 
-        'selling_price'=>$this->selling_price,
+            'buying_price'=>
+                (float)$this->buying_price,
 
-        'quantity'=>$this->quantity,
 
-        'supplier_id'=>$this->supplier_id,
+            'selling_price'=>
+                (float)$this->selling_price,
 
-        'supplier'=>$this->whenLoaded(
-            'supplierData'
-        ),
 
-    ];
+            'quantity'=>
+                (int)$this->quantity,
+
+
+            'supplier_id'=>
+                $this->supplier_id,
+
+
+            'supplier'=>$this->whenLoaded(
+                'supplierData',
+                function(){
+
+                    return [
+
+                        'id'=>$this->supplierData->id,
+
+                        'name'=>$this->supplierData->name
+
+                    ];
+
+                }
+            ),
+
+
+        ];
     }
 }

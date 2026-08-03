@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Http\Resources\SaleItemResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -12,6 +11,10 @@ class SaleResource extends JsonResource
 
     public function toArray(Request $request): array
     {
+
+        $paidAmount = $this->payments()
+            ->sum('amount');
+
 
         return [
 
@@ -32,7 +35,6 @@ class SaleResource extends JsonResource
             ],
 
 
-
             'items'=>
             SaleItemResource::collection(
                 $this->items
@@ -42,6 +44,14 @@ class SaleResource extends JsonResource
 
             'total_amount'=>
             $this->total_amount,
+
+
+            'paid_amount'=>
+            $paidAmount,
+
+
+            'balance'=>
+            $this->total_amount - $paidAmount,
 
 
 

@@ -8,11 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class Sale extends Model
 {
 protected $fillable = [
+
     'invoice_number',
 
     'customer_id',
 
     'total_amount',
+
+    'paid_amount',
+
+    'balance',
 
     'payment_status'
 
@@ -36,6 +41,13 @@ public function items()
         SaleItem::class
     );
 
+}
+
+public function payments()
+{
+    return $this->hasMany(
+        Payment::class
+    );
 }
 
 

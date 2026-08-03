@@ -29,7 +29,9 @@ return new class extends Migration
             $table->integer('quantity')
                 ->default(0);
 
-            $table->string('supplier');
+            $table->foreignId('supplier_id')
+                ->constrained()
+                ->cascadeOnDelete();
             $table->timestamps();
         });
     }

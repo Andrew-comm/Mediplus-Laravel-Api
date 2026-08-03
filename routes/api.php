@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CustomerController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\MedicineController;
+use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\SaleController;
 use App\Http\Controllers\Api\SupplierController;
 use Illuminate\Http\Request;
@@ -43,6 +44,13 @@ Route::apiResource(
     SaleController::class
 );
 
+Route::apiResource(
+
+'payments',
+
+PaymentController::class
+
+);
 
 Route::middleware('auth:sanctum')->group(function () {
 

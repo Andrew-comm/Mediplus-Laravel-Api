@@ -72,11 +72,10 @@ class UpdateMedicineRequest extends FormRequest
             ],
 
 
-            'supplier' => [
-                'required',
-                'string',
-                'max:255'
-            ]
+           'supplier_id' => [
+            'required',
+            'exists:suppliers,id'
+        ]
 
         ];
     }
