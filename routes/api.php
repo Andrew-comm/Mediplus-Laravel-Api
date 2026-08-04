@@ -1,15 +1,16 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\CustomerController;
-use App\Http\Controllers\Api\DashboardController;
-use App\Http\Controllers\Api\InventoryController;
-use App\Http\Controllers\Api\MedicineController;
-use App\Http\Controllers\Api\PaymentController;
-use App\Http\Controllers\Api\SaleController;
-use App\Http\Controllers\Api\StockMovementController;
-use App\Http\Controllers\Api\SupplierController;
-use Illuminate\Http\Request;
+
+use App\Modules\Customers\Controllers\CustomerController;
+use App\Modules\Dashboard\Controllers\DashboardController;
+use App\Modules\Inventory\Controllers\InventoryController;
+use App\Modules\Medicines\Controllers\MedicineController;
+use App\Modules\Payments\Controllers\PaymentController;
+use App\Modules\Sales\Controllers\SaleController;
+use App\Modules\StockMovements\Controllers\StockMovementController;
+use App\Modules\Suppliers\Controllers\SupplierController;
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -40,14 +41,6 @@ Route::apiResource(
 );
 
 
-Route::get(
-    '/inventory',
-    [InventoryController::class,'index']
-);
-
-
-
-
 Route::middleware('auth:sanctum')->group(function () {
 
 
@@ -55,9 +48,6 @@ Route::middleware('auth:sanctum')->group(function () {
         '/logout',
         [AuthController::class,'logout']
     );
-
-
-
 
     Route::get(
         '/user',
@@ -103,7 +93,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         PaymentController::class
 
-        );
+    );
 
     Route::apiResource(
 
@@ -111,12 +101,19 @@ Route::middleware('auth:sanctum')->group(function () {
 
         CustomerController::class
 
-        );
+    );
 
     Route::apiResource(
             'sales',
             SaleController::class
-        );
+ );
+
+    Route::get(
+        '/inventory',
+        [InventoryController::class,'index']
+    );
+
+
 
 
 
