@@ -1,12 +1,15 @@
 <?php
 
 namespace App\Http\Controllers\Api;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreMedicineRequest;
 use App\Http\Requests\UpdateMedicineRequest;
 use App\Http\Resources\MedicineResource;
-use App\Http\Controllers\Controller;
 use App\Models\Medicine;
+use App\Models\StockMovement;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
 
 class MedicineController extends Controller
 {
@@ -26,16 +29,40 @@ class MedicineController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreMedicineRequest $request)
+  public function store(StoreMedicineRequest $request)
     {
-        $medicine = Medicine::create(
-        $request->validated()
+        return DB::transaction(function () use ($request) {
 
-    );
+            $medicine = Medicine::create(
+                $request->validated()
+            );
 
-    // return response()->json($medicine,201);
+            // Create opening stock movement
+            if ($medicine->quantity > 0) {
 
-    return new MedicineResource($medicine);
+              StockMovement::create([
+
+                'medicine_id' => $medicine->id,
+
+                'type' => 'opening',
+
+                'direction' => 'IN',
+
+                'quantity' => $medicine->quantity,
+
+                'reference' => 'OPEN-' . $medicine->id,
+
+                'remarks' => 'Initial stock when medicine was created'
+
+            ]);
+
+            }
+
+            return new MedicineResource(
+                $medicine->load('supplierData')
+            );
+
+        });
     }
 
     /**
@@ -51,21 +78,45 @@ class MedicineController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateMedicineRequest $request, Medicine $medicine)
+   public function update(UpdateMedicineRequest $request, Medicine $medicine)
     {
-        $medicine->update(
-        $request->validated()
-    );
+        return DB::transaction(function () use ($request, $medicine) {
 
+            $oldQuantity = $medicine->quantity;
 
-    return response() ->json([
-        'message' => 'medicine updated successfully',
+            $medicine->update($request->validated());
 
-        'data'=>'$medicine'
+            $newQuantity = $medicine->quantity;
 
+            $difference = $newQuantity - $oldQuantity;
 
+            if ($difference != 0) {
 
-    ]);
+                StockMovement::create([
+
+                    'medicine_id' => $medicine->id,
+
+                    'type' => 'adjustment',
+
+                    'direction' => $difference > 0 ? 'IN' : 'OUT',
+
+                    'quantity' => abs($difference),
+
+                    'reference' => 'ADJ-' . now()->format('YmdHis'),
+
+                    'remarks' => $difference > 0
+                        ? 'Stock increased manually'
+                        : 'Stock reduced manually'
+
+                ]);
+
+            }
+
+            return new MedicineResource(
+                $medicine->fresh()->load('supplierData')
+            );
+
+        });
     }
 
     /**

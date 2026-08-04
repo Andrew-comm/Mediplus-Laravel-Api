@@ -50,6 +50,11 @@ class Medicine extends Model
 
     }
 
+    public function stockMovements()
+    {
+        return $this->hasMany(StockMovement::class);
+    }
+
 
 
 }

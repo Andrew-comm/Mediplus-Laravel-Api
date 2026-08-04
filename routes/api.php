@@ -3,9 +3,11 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CustomerController;
 use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\InventoryController;
 use App\Http\Controllers\Api\MedicineController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\SaleController;
+use App\Http\Controllers\Api\StockMovementController;
 use App\Http\Controllers\Api\SupplierController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -31,26 +33,20 @@ Route::post(
     [AuthController::class,'login']
 );
 
-Route::apiResource(
-
-    'customers',
-
-    CustomerController::class
-
-);
 
 Route::apiResource(
-    'sales',
-    SaleController::class
+    'stock-movements',
+    StockMovementController::class
 );
 
-Route::apiResource(
 
-'payments',
-
-PaymentController::class
-
+Route::get(
+    '/inventory',
+    [InventoryController::class,'index']
 );
+
+
+
 
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -96,14 +92,33 @@ Route::middleware('auth:sanctum')->group(function () {
         MedicineController::class
     );
 
-
-
-
-
     Route::apiResource(
         'suppliers',
         SupplierController::class
     );
+
+    Route::apiResource(
+
+        'payments',
+
+        PaymentController::class
+
+        );
+
+    Route::apiResource(
+
+        'customers',
+
+        CustomerController::class
+
+        );
+
+    Route::apiResource(
+            'sales',
+            SaleController::class
+        );
+
+
 
 
 });
