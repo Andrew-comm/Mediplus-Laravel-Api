@@ -1,16 +1,15 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
-
 use App\Modules\Customers\Controllers\CustomerController;
 use App\Modules\Dashboard\Controllers\DashboardController;
+use App\Modules\FinancialDashboard\Controllers\FinancialDashboardController;
 use App\Modules\Inventory\Controllers\InventoryController;
 use App\Modules\Medicines\Controllers\MedicineController;
 use App\Modules\Payments\Controllers\PaymentController;
 use App\Modules\Sales\Controllers\SaleController;
 use App\Modules\StockMovements\Controllers\StockMovementController;
 use App\Modules\Suppliers\Controllers\SupplierController;
-
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -40,6 +39,20 @@ Route::apiResource(
     StockMovementController::class
 );
 
+Route::apiResource(
+        'medicines',
+        MedicineController::class
+    );
+
+Route::get(
+    '/financial-dashboard',
+    [FinancialDashboardController::class, 'index']
+    );
+
+Route::get(
+    '/financial-dashboard/sales/{status}',
+    [FinancialDashboardController::class, 'salesByStatus']
+);
 
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -77,10 +90,6 @@ Route::middleware('auth:sanctum')->group(function () {
     );
 
 
-    Route::apiResource(
-        'medicines',
-        MedicineController::class
-    );
 
     Route::apiResource(
         'suppliers',
@@ -106,12 +115,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource(
             'sales',
             SaleController::class
- );
+    );
 
     Route::get(
         '/inventory',
         [InventoryController::class,'index']
     );
+
+
 
 
 

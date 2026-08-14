@@ -1,0 +1,352 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Mediplus Pharmacy API",
+        "description": "REST API for the Mediplus Pharmacy Management System.",
+        "contact": {
+            "name": "Mediplus Development Team"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://127.0.0.1:8001",
+            "description": "Mediplus Local Development Server"
+        }
+    ],
+    "paths": {
+        "/api/medicines": {
+            "get": {
+                "tags": [
+                    "Medicines"
+                ],
+                "summary": "Get all medicines",
+                "description": "Retrieve a paginated list of medicines including supplier information.",
+                "operationId": "getMedicines",
+                "responses": {
+                    "200": {
+                        "description": "Medicines retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Amoxicillin"
+                                                    },
+                                                    "category": {
+                                                        "type": "string",
+                                                        "example": "Antibiotic"
+                                                    },
+                                                    "batch_number": {
+                                                        "type": "string",
+                                                        "example": "AMX-2026-001"
+                                                    },
+                                                    "expiry_date": {
+                                                        "type": "string",
+                                                        "format": "date",
+                                                        "example": "2027-12-31"
+                                                    },
+                                                    "buying_price": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 100
+                                                    },
+                                                    "selling_price": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 150
+                                                    },
+                                                    "quantity": {
+                                                        "type": "integer",
+                                                        "example": 50
+                                                    },
+                                                    "supplier_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Medicines"
+                ],
+                "summary": "Create a medicine",
+                "description": "Create a new medicine and automatically create an opening stock movement when the initial quantity is greater than zero.",
+                "operationId": "createMedicine",
+                "requestBody": {
+                    "description": "Medicine information",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "category",
+                                    "batch_number",
+                                    "expiry_date",
+                                    "buying_price",
+                                    "selling_price",
+                                    "quantity",
+                                    "supplier_id"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Amoxicillin"
+                                    },
+                                    "category": {
+                                        "type": "string",
+                                        "example": "Antibiotic"
+                                    },
+                                    "batch_number": {
+                                        "type": "string",
+                                        "example": "AMX-2026-001"
+                                    },
+                                    "expiry_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2027-12-31"
+                                    },
+                                    "buying_price": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 100
+                                    },
+                                    "selling_price": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 150
+                                    },
+                                    "quantity": {
+                                        "type": "integer",
+                                        "example": 100
+                                    },
+                                    "supplier_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Medicine created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/medicines/{medicine}": {
+            "get": {
+                "tags": [
+                    "Medicines"
+                ],
+                "summary": "Get a medicine",
+                "description": "Retrieve a single medicine by its ID.",
+                "operationId": "getMedicine",
+                "parameters": [
+                    {
+                        "name": "medicine",
+                        "in": "path",
+                        "description": "Medicine ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Medicine retrieved successfully"
+                    },
+                    "404": {
+                        "description": "Medicine not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Medicines"
+                ],
+                "summary": "Update a medicine",
+                "description": "Update an existing medicine. If the quantity changes, a stock adjustment movement is automatically created.",
+                "operationId": "updateMedicine",
+                "parameters": [
+                    {
+                        "name": "medicine",
+                        "in": "path",
+                        "description": "Medicine ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "description": "Updated medicine information",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Amoxicillin"
+                                    },
+                                    "category": {
+                                        "type": "string",
+                                        "example": "Antibiotic"
+                                    },
+                                    "batch_number": {
+                                        "type": "string",
+                                        "example": "AMX-2026-001"
+                                    },
+                                    "expiry_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2027-12-31"
+                                    },
+                                    "buying_price": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 105
+                                    },
+                                    "selling_price": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 155
+                                    },
+                                    "quantity": {
+                                        "type": "integer",
+                                        "example": 80
+                                    },
+                                    "supplier_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Medicine updated successfully"
+                    },
+                    "404": {
+                        "description": "Medicine not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Medicines"
+                ],
+                "summary": "Delete a medicine",
+                "description": "Delete a medicine from the system.",
+                "operationId": "deleteMedicine",
+                "parameters": [
+                    {
+                        "name": "medicine",
+                        "in": "path",
+                        "description": "Medicine ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Medicine deleted successfully"
+                    },
+                    "404": {
+                        "description": "Medicine not found"
+                    }
+                }
+            }
+        },
+        "/api/medicines/expiring-soon": {
+            "get": {
+                "tags": [
+                    "Medicines"
+                ],
+                "summary": "Get medicines expiring soon",
+                "description": "Retrieve medicines whose expiry date falls within the next 30 days.",
+                "operationId": "getExpiringMedicines",
+                "responses": {
+                    "200": {
+                        "description": "Expiring medicines retrieved successfully"
+                    }
+                }
+            }
+        },
+        "/api/medicines/low-stock": {
+            "get": {
+                "tags": [
+                    "Medicines"
+                ],
+                "summary": "Get low stock medicines",
+                "description": "Retrieve medicines whose quantity is below 20 units.",
+                "operationId": "getLowStockMedicines",
+                "responses": {
+                    "200": {
+                        "description": "Low stock medicines retrieved successfully"
+                    }
+                }
+            }
+        },
+        "/api/medicines/expired": {
+            "get": {
+                "tags": [
+                    "Medicines"
+                ],
+                "summary": "Get expired medicines",
+                "description": "Retrieve medicines whose expiry date has already passed.",
+                "operationId": "getExpiredMedicines",
+                "responses": {
+                    "200": {
+                        "description": "Expired medicines retrieved successfully"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Medicines",
+            "description": "Medicines"
+        }
+    ]
+}
